@@ -10,15 +10,14 @@ export const QuotesAPI = (url) => {
 	const [data, setData] = useState({
 		state: apiStates.LOADING,
 		error: "",
-		data: [],
+		data: null,
 	});
 
-	const setPartData = (partialData) => setData({ ...data, ...partialData });
-
 	useEffect(() => {
-		setPartData({
-			state: apiStates.LOADING,
-		});
+		const setPartData = (partialData) =>
+			setData((prevData) => {
+				return { ...prevData, ...partialData };
+			});
 
 		fetch(url)
 			.then((response) => response.json())
@@ -34,7 +33,7 @@ export const QuotesAPI = (url) => {
 					error: "fetch failed",
 				});
 			});
-	}, []);
+	}, [url]);
 
 	return data;
 };

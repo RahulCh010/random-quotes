@@ -6,20 +6,7 @@ import "./styles.scss";
 const APIURL =
 	"https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json";
 
-var colors = [
-	"#16a085",
-	"#27ae60",
-	"#2c3e50",
-	"#f39c12",
-	"#e74c3c",
-	"#9b59b6",
-	"#FB6964",
-	"#342224",
-	"#472E32",
-	"#BDBB99",
-	"#77B1A9",
-	"#73A857",
-];
+var colors = ["#16a085", "#27ae60", "#2c3e50", "#f39c12", "#e74c3c", "#9b59b6", "#FB6964", "#342224", "#472E32", "#BDBB99", "#77B1A9", "#73A857"];
 
 export default function RandomQuotes(props) {
 	const [quote, setQuote] = useState("");
@@ -27,24 +14,24 @@ export default function RandomQuotes(props) {
 	const [color, setColor] = useState("");
 	const { state, data, error } = QuotesAPI(APIURL);
 
-	const getRandomQuoteIndex = (data) => {
-		return Math.floor(Math.random() * data.quotes.length);
-	};
-
-	const getRandomQuote = () => {
-		if (state === "SUCCESS") {
-			const index = getRandomQuoteIndex(data);
-			const randomQuote = data.quotes[index];
-			setQuote(randomQuote.quote);
-			setAuthor(randomQuote.author);
-			getRandomColor();
-		}
+	const getRandomIndex = (data) => {
+		return Math.floor(Math.random() * data.length);
 	};
 
 	const getRandomColor = () => {
 		const randomColor = colors[Math.floor(Math.random() * colors.length)];
 		setColor(randomColor);
 		props.selectRandomColor(randomColor);
+	};
+
+	const getRandomQuote = () => {
+		if (data !== null) {
+			const index = getRandomIndex(data.quotes);
+			const randomQuote = data.quotes[index];
+			setQuote(randomQuote.quote);
+			setAuthor(randomQuote.author);
+			getRandomColor();
+		}
 	};
 
 	const quoteBoxInlineStyle = {
@@ -64,8 +51,16 @@ export default function RandomQuotes(props) {
 	let apiResult = "";
 
 	useEffect(() => {
-		getRandomQuote();
-	}, [state]);
+		if (data !== null) {
+			const index = getRandomIndex(data.quotes);
+			const randomQuote = data.quotes[index];
+			setQuote(randomQuote.quote);
+			setAuthor(randomQuote.author);
+			const randomColor = colors[getRandomIndex(colors)];
+			setColor(randomColor);
+			props.selectRandomColor(randomColor);
+		}
+	}, [data, props]);
 
 	switch (state) {
 		case apiStates.ERROR:
